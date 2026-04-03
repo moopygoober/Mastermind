@@ -1,81 +1,126 @@
 /*	Name: Mark Higley
-	Problem:  Create Mastermind tester?
-	Pseudocode: Output message to the screen
-	Notes:.
+	Problem:  Create Mastermind game
+	Pseudocode: Got a random 4-digit number, each digit is 1-6. Had the user guess a legal 4-digit number
+	and had the computer test if the secret number and the user guess is equal, or contains that digit somewhere in the
+	secret number. Output number of black pins (right number, right location) and white pins (right number, wrong location).
+	Notes: This took far too long. And I do not use the original file with each secret combination, guess combination, and the
+	number of black and white pins for each combination. The file I use is a modified version where it is just the 1296 combinations of 1111
+	through 6666
 	Maintenance log:
         Date:		Done:
-        3/30/26     Added an NPC class
+        4/3/26      Completed the program
 */
 
 
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.io.FileReader;
+import java.io.*;
+
 
 public class Mastermind {
-
-    private static final String testFilename = "C:/Users/cupan/IdeaProjects/Mastermind/src/mastermind_tester.txt";
-
     static void main(String[] args) throws FileNotFoundException {
-        //Scanner file = new Scanner(new File("C:/Users/cupan/IdeaProjects/Mastermind/src/mastermind_4p6c.txt"));
-        FileReader fr = new FileReader(testFilename);
-        //Scanner file = new Scanner(fr);
-        Scanner input = new Scanner(System.in);
-
-        //file.nextLine(); // Drop the header row
-        String secret = "";
-        String guess = "";
-
-        runTest();
-    }
-
-    private static int[] runTest() throws FileNotFoundException {
-//        byte[] secretDigits = codeStringToBytes(secret);
-//        byte[] guessDigits = codeStringToBytes(guess);
-
-        int b = 0;
-        int w = 0;
+        //File contains numbers 1111 - 6666 which is 1,296 lines
+        Scanner file = new Scanner(new File("C:/Users/cupan/IdeaProjects/Mastermind-Program/src/mastermind_number_combo.txt"));
+        boolean again = false;
         Random rn = new Random();
-
         Scanner input = new Scanner(System.in);
-        FileReader fr = new FileReader(testFilename);
-        Scanner lineScanner = new Scanner(fr);
-        lineScanner.nextLine();
+        Scanner answer = new Scanner(System.in);
+        List<String> gameNum = new ArrayList<>();
 
-        List<String> secretNum = new ArrayList<>();
-        List<String> guessNum = new ArrayList<>();
-        while (lineScanner.hasNextLine()) {
-            String line = lineScanner.nextLine();
-            String[] testData = line.split(",");
-            secretNum.add(testData[0]);
-            guessNum.add(testData[1]);
+        while (file.hasNext()){
+            gameNum.add(file.nextLine());
         }
-        int Ran_num = rn.nextInt(secretNum.size());
 
-        String sN = secretNum.get(Ran_num);
-        System.out.println(secretNum.getFirst());
-        List<String> userGuess = new ArrayList<>();
+        do {
+            //amountGuessed used to track the number of guesses from the user. Program stops at 9
+            int amountGuessed = 1;
+            int Ran_num = rn.nextInt(gameNum.size());
+            //String arrays for both the user's guess and the secret number (chosen at random)
+            //String arrays are used for the comparison at the bottom of program
+            String[] guess = new String[4];
+            String[] secret = new String[4];
+            String secretNum = gameNum.get(Ran_num);
 
-        String guess = input.next();
-        userGuess.add(guess);
+            for (int i = 0; i < 50; i++) {
+                System.out.println();
+            }
+            System.out.println("Welcome to Mastermind! The computer will pick a random number and it's up to you to guess what number it is! " +
+                    "\nAfter each guess you will receive a hint for which number is correct, and in the correct spot" +
+                    "\nand which number is correct, but in the wrong spot.");
+            System.out.println("Your guess here (Hit enter to lock in your guess!):");
 
-        // For-loop and an if statement to determine what number is correct and in the correct spot (b)
-        // and what number is correct but in the wrong spot (w)
-        System.out.println("right in right spot: " + b + " right in wrong spot: " + w);
-        return new int[] {b,w};
-        //System.out.println(Arrays.toString(hints));
-        //System.out.println("\nRight number in right spot: " + b + "\nRight number in wrong spot: " + w);
+            do {
+                int blackPin = 0;
+                int whitePin = 0;
 
+                boolean cont = false;
+                do {
+                    String response = input.next();
+                    if (response.contains("7") || response.contains("8") || response.contains("9") || response.contains("0") || response.length() != 4) {
+                        System.out.println("That is not a valid guess");
+                        cont = false;
+                    }
+                    else{
+                        //if user input has the legal numbers and is the legal length, it will add the input to the guess array
+                        for (int i = 0; i < response.length(); i++) {
+                            guess[i] = String.valueOf(response.charAt(i));
+                        }
+                        cont = true;
+                    }
+                    // this will run until the user input is valid
+                }while(!cont);
 
-    }
+                //the secret array is populated with the individual characters of the randomly selected secret number
+                for (int i = 0; i < secretNum.length(); i++) {
+                    secret[i] = String.valueOf(secretNum.charAt(i));
+                }
+                System.out.println("\n\n\n\n\n\nYour guess: " + Arrays.toString(guess));
 
+                //Another array is created to store a 2 if the secret at location 0-3 and guess at location 0-3 contains the same number
+                //and, it stores a 1 if the guess at location 0-3 contains the same number at the previously chosen secret location 0-3
+                //for example: guess at location 0-3 contains the same as secret at location 1
+                int[] guessResult = new int[4];
 
-    public static byte[] codeStringToBytes(String s) {
-        byte[] r = s.getBytes();
-        for (int i = 0; i < r.length; i++) {
-            r[i] -= '0';
-        }
-        return r;
+                for (int i = 0; i < secret.length; i++) {
+                    if (secret[i].equals(guess[i])) {
+                        guessResult[i] = 2;
+                    } else {
+                        for (int n = 0; n < guess.length; n++) {
+                            if (guessResult[n] == 0) {
+                                if (guess[n].equals(secret[i])) {
+                                    guessResult[n] = 1;
+                                }
+                            }
+                        }
+                    }
+                }
+                //this gives the correct number of black and white pins for the user
+                for (int i = 0; i < guessResult.length; i++) {
+                    if (guessResult[i] == 2) {
+                        blackPin++;
+                    } else if (guessResult[i] == 1) {
+                        whitePin++;
+                    }
+                }
+                System.out.println("Right number in right spot: " + blackPin + " Right number in wrong spot: " + whitePin + "\nAttempt: " + amountGuessed);
+                amountGuessed++;
+                if (amountGuessed == 9) {
+                    System.out.println("Be careful! This is your last guess!");
+                }
+
+            } while (!Arrays.equals(guess, secret) && amountGuessed < 10);
+
+            if (Arrays.equals(guess, secret)) {
+                System.out.println("Congratulations! You found the secret number! Play again?\n1. Yes\n2. No");
+            } else {
+                System.out.println("Aww...you didn't guess the number. It was " + Arrays.toString(secret) + " Wanna play again?\n1. Yes\n2. No");
+            }
+
+            int ans = answer.nextInt();
+            again = ans == 1;
+
+        } while (again);
+        System.out.println("Bye!");
     }
 
 
