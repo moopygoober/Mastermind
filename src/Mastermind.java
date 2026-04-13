@@ -57,7 +57,7 @@ public class Mastermind {
                 do {
                     String response = input.next();
                     if (response.contains("7") || response.contains("8") || response.contains("9") || response.contains("0") || response.length() != 4) {
-                        System.out.println("That is not a valid guess");
+                        System.out.println("That is not a valid guess!");
                         cont = false;
                     }
                     else{
@@ -74,7 +74,7 @@ public class Mastermind {
                 for (int i = 0; i < secretNum.length(); i++) {
                     secret[i] = String.valueOf(secretNum.charAt(i));
                 }
-                System.out.println("\n\n\n\n\n\nYour guess: " + Arrays.toString(guess));
+                System.out.println("\n\n\n\n\n\nSecret Number: " + Arrays.toString(secret) + "\nYour Guess:    " + Arrays.toString(guess));
 
                 //Another array is created to store a 2 if the secret at location 0-3 and guess at location 0-3 contains the same number
                 //and, it stores a 1 if the guess at location 0-3 contains the same number at the previously chosen secret location 0-3
@@ -89,6 +89,7 @@ public class Mastermind {
                             if (guessResult[n] == 0) {
                                 if (guess[n].equals(secret[i])) {
                                     guessResult[n] = 1;
+                                    break;
                                 }
                             }
                         }
