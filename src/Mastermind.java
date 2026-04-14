@@ -44,6 +44,7 @@ public class Mastermind {
             for (int i = 0; i < 50; i++) {
                 System.out.println();
             }
+
             System.out.println("Welcome to Mastermind! The computer will pick a random number and it's up to you to guess what number it is! " +
                     "\nAfter each guess you will receive a hint for which number is correct, and in the correct spot" +
                     "\nand which number is correct, but in the wrong spot.");
@@ -74,27 +75,37 @@ public class Mastermind {
                 for (int i = 0; i < secretNum.length(); i++) {
                     secret[i] = String.valueOf(secretNum.charAt(i));
                 }
+
+                /*secret[0] = "6";
+                secret[1] = "6";
+                secret[2] = "6";
+                secret[3] = "3";*/
+
                 System.out.println("\n\n\n\n\n\nSecret Number: " + Arrays.toString(secret) + "\nYour Guess:    " + Arrays.toString(guess));
 
                 //Another array is created to store a 2 if the secret at location 0-3 and guess at location 0-3 contains the same number
                 //and, it stores a 1 if the guess at location 0-3 contains the same number at the previously chosen secret location 0-3
-                //for example: guess at location 0-3 contains the same as secret at location 1
+                //for example: guess at location 2 contains the same as secret at location 1
                 int[] guessResult = new int[4];
 
                 for (int i = 0; i < secret.length; i++) {
-                    if (secret[i].equals(guess[i])) {
-                        guessResult[i] = 2;
-                    } else {
-                        for (int n = 0; n < guess.length; n++) {
-                            if (guessResult[n] == 0) {
-                                if (guess[n].equals(secret[i])) {
-                                    guessResult[n] = 1;
-                                    break;
-                                }
+
+                    for (int n = 0; n < guess.length; n++) {
+                        if (guessResult[n] == 0) {
+                            if (guess[n].equals(secret[i])) {
+                                guessResult[n] = 1;
+                                break;
                             }
+
                         }
                     }
+                    if (secret[i].equals(guess[i])) {
+                        guessResult[i] = 2;
+                    }
+
+                        System.out.println("Itr " + i + ": " + Arrays.toString(guessResult));
                 }
+                System.out.println();
                 //this gives the correct number of black and white pins for the user
                 for (int i = 0; i < guessResult.length; i++) {
                     if (guessResult[i] == 2) {
@@ -103,6 +114,7 @@ public class Mastermind {
                         whitePin++;
                     }
                 }
+                //System.out.println(Arrays.toString(guessResult));
                 System.out.println("Right number in right spot: " + blackPin + " Right number in wrong spot: " + whitePin + "\nAttempt: " + amountGuessed);
                 amountGuessed++;
                 if (amountGuessed == 9) {
@@ -123,6 +135,7 @@ public class Mastermind {
         } while (again);
         System.out.println("Bye!");
     }
+
 
 
 }
